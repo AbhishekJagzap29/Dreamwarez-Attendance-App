@@ -250,10 +250,41 @@ class SessionExpiredException implements Exception {
   final String message;
 
   SessionExpiredException(this.message);
+
+  @override
+  String toString() => message;
 }
 
 class ApiService {
   ApiService();
+
+  bool _looksLikeHtmlResponse(http.Response response) {
+    final contentType = response.headers['content-type']?.toLowerCase() ?? '';
+    final bodyStart = response.body.trimLeft().toLowerCase();
+
+    return contentType.contains('text/html') ||
+        bodyStart.startsWith('<!doctype html') ||
+        bodyStart.startsWith('<html');
+  }
+
+  Future<void> _throwIfSessionExpiredResponse(
+    http.Response response, {
+    required String requestLabel,
+  }) async {
+    if (response.statusCode == 401 || response.statusCode == 303) {
+      await clearSessionData();
+      throw SessionExpiredException(
+          'Session has expired. Please log in again.');
+    }
+
+    if (_looksLikeHtmlResponse(response)) {
+      debugPrint(
+          '$requestLabel returned HTML instead of JSON. Treating it as an expired/invalid session.');
+      await clearSessionData();
+      throw SessionExpiredException(
+          'Session expired or invalid response received. Please log in again.');
+    }
+  }
 
   /// Clears all stored session data
   Future<void> clearSessionData() async {
@@ -363,12 +394,10 @@ class ApiService {
         }),
       );
 
-      // Check for session expiration or unauthorized (though unlikely during login)
-      if (response.statusCode == 401 || response.statusCode == 303) {
-        await clearSessionData();
-        throw SessionExpiredException(
-            'Session expired during authentication. Please try again.');
-      }
+      await _throwIfSessionExpiredResponse(
+        response,
+        requestLabel: 'Authentication request',
+      );
 
       final responseData = jsonDecode(response.body);
       debugPrint('Authentication response: $responseData');
@@ -427,6 +456,8 @@ class ApiService {
         'groups': groups,
         'message': responseData['message'] ?? 'Login successful',
       };
+    } on SessionExpiredException {
+      rethrow;
     } catch (e) {
       debugPrint('Authentication error: $e');
       throw Exception('$e');
@@ -555,14 +586,14 @@ class ApiService {
         body: jsonEncode(body),
       );
 
-      // Check for session expiration
-      if (response.statusCode == 401 || response.statusCode == 303) {
-        await clearSessionData();
-        throw SessionExpiredException(
-            'Session has expired. Please log in again.');
-      }
+      await _throwIfSessionExpiredResponse(
+        response,
+        requestLabel: 'POST $endpoint',
+      );
 
       return response;
+    } on SessionExpiredException {
+      rethrow;
     } catch (e) {
       debugPrint('POST request failed: $e');
       throw Exception('POST request failed: $e');
@@ -584,14 +615,14 @@ class ApiService {
         headers: {'Content-Type': 'application/json', 'Cookie': sessionId},
       );
 
-      // Check for session expiration
-      if (response.statusCode == 401 || response.statusCode == 303) {
-        await clearSessionData();
-        throw SessionExpiredException(
-            'Session has expired. Please log in again.');
-      }
+      await _throwIfSessionExpiredResponse(
+        response,
+        requestLabel: 'GET $endpoint',
+      );
 
       return response;
+    } on SessionExpiredException {
+      rethrow;
     } catch (e) {
       debugPrint('GET request failed: $e');
       throw Exception('GET request failed: $e');

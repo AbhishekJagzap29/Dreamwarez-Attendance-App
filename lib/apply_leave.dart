@@ -1280,6 +1280,7 @@ import '/models/leave_request.dart';
 import '/services/leave_service.dart';
 import '/services/employee_service.dart';
 import '/models/employee.dart';
+import '/widgets/search_filter_bar.dart';
 
 class ApplyLeave extends StatefulWidget {
   final String userRole;
@@ -2239,60 +2240,12 @@ class _ApplyLeaveState extends State<ApplyLeave> {
               children: [
                 if (widget.userRole == 'admin') _buildLeaveStats(),
                 if (_showFilter) _buildFilterUI(),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Search by Employee name',
-                      prefixIcon: const Icon(
-                        Icons.search,
-                        color: Color(0xFF073850),
-                      ),
-                      suffixIcon: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (_searchController.text.isNotEmpty)
-                            IconButton(
-                              icon: const Icon(
-                                Icons.clear,
-                                color: Color(0xFF073850),
-                              ),
-                              onPressed: () {
-                                _searchController.clear();
-                                _filterRequests();
-                              },
-                            ),
-                          IconButton(
-                            icon: Icon(
-                              _showFilter
-                                  ? Icons.filter_list_off
-                                  : Icons.filter_list,
-                              color: const Color(0xFF073850),
-                            ),
-                            onPressed: _showFilterDialog,
-                          ),
-                        ],
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.black),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.black),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Colors.black,
-                          width: 2,
-                        ),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                    ),
-                  ),
+                SearchFilterBar(
+                  controller: _searchController,
+                  hintText: 'Search by Employee name',
+                  showFilter: _showFilter,
+                  onChanged: _filterRequests,
+                  onFilterPressed: _showFilterDialog,
                 ),
                 _isFetching
                     ? const Expanded(

@@ -8,6 +8,7 @@ import '/models/attendance.dart';
 import '/models/attendance_report.dart';
 import '/services/attendance_services.dart';
 import '/services/employee_service.dart';
+import '/widgets/search_filter_bar.dart';
 
 class AttendancePage extends StatefulWidget {
   final bool isAdmin;
@@ -719,34 +720,18 @@ class _AttendancePageState extends State<AttendancePage> {
                             ),
                           ],
                         ),
-                        child: TextField(
+                        child: SearchFilterBar(
                           controller: _searchController,
-                          decoration: InputDecoration(
-                            hintText: 'Search team members...',
-                            prefixIcon: const Icon(
-                              Icons.search,
-                              color: Colors.grey,
-                            ),
-                            suffixIcon: _searchController.text.isNotEmpty
-                                ? IconButton(
-                                    icon: const Icon(
-                                      Icons.clear,
-                                      color: Colors.grey,
-                                    ),
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      _filterUsers();
-                                    },
-                                  )
-                                : null,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 14,
-                            ),
-                          ),
+                          hintText: 'Search team members...',
+                          onChanged: _filterUsers,
+                          padding: EdgeInsets.zero,
+                          iconColor: Colors.grey,
+                          borderSide: BorderSide.none,
+                          enabledBorderSide: BorderSide.none,
+                          focusedBorderSide: BorderSide.none,
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 14),
+                          filled: false,
                         ),
                       ),
                     const SizedBox(height: 20),

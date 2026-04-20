@@ -909,6 +909,8 @@ class _UserProfileState extends State<UserProfile> {
 
   final Color _primaryColor = const Color.fromARGB(255, 7, 56, 80);
   final Color _accentColor = const Color.fromARGB(255, 15, 1, 4);
+  final Color _pageBackgroundColor = const Color(0xFFF1F6F9);
+  final Color _appBarColor = const Color(0xFF073850);
 
   final UserProfileService _userProfileService = UserProfileService();
   final ApiService _apiService = ApiService();
@@ -1402,7 +1404,7 @@ class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: _pageBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Profile',
@@ -1412,7 +1414,8 @@ class _UserProfileState extends State<UserProfile> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: _primaryColor,
+        backgroundColor: _appBarColor,
+        surfaceTintColor: _appBarColor,
         elevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -1477,85 +1480,92 @@ class _UserProfileState extends State<UserProfile> {
       ),
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: _primaryColor,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.06),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-            ),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: isEditing ? _changePhoto : null,
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 4),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
-                              blurRadius: 15,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        child: CircleAvatar(
-                          radius: 58,
-                          backgroundImage: _selectedImage != null
-                              ? FileImage(_selectedImage!)
-                              : _imagePath.startsWith('assets/')
-                                  ? AssetImage(_imagePath)
-                                  : _imagePath.startsWith('http')
-                                      ? NetworkImage(_imagePath)
-                                      : MemoryImage(base64Decode(_imagePath))
-                                          as ImageProvider,
-                        ),
-                      ),
-                      if (isEditing)
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 8,
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.camera_alt,
-                              color: _primaryColor,
-                              size: 20,
-                            ),
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: isEditing ? _changePhoto : null,
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: _primaryColor, width: 4),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.12),
+                                blurRadius: 15,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: CircleAvatar(
+                            radius: 58,
+                            backgroundImage: _selectedImage != null
+                                ? FileImage(_selectedImage!)
+                                : _imagePath.startsWith('assets/')
+                                    ? AssetImage(_imagePath)
+                                    : _imagePath.startsWith('http')
+                                        ? NetworkImage(_imagePath)
+                                        : MemoryImage(base64Decode(_imagePath))
+                                            as ImageProvider,
                           ),
                         ),
-                    ],
+                        if (isEditing)
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: _primaryColor,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 8,
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  _name,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                  const SizedBox(height: 16),
+                  Text(
+                    _name,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF073850),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 30),
-              ],
+                ],
+              ),
             ),
           ),
 

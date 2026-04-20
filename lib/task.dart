@@ -4,6 +4,7 @@ import '/models/task_request.dart';
 import '/models/employee.dart';
 import '/services/task_service.dart';
 import '/services/employee_service.dart';
+import '/widgets/search_filter_bar.dart';
 
 class Task extends StatefulWidget {
   final List<String> groups;
@@ -394,46 +395,13 @@ class _TaskState extends State<Task> {
       body: Column(
         children: [
           if (_showFilter) _buildFilterUI(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search by assigned to...',
-                prefixIcon: const Icon(Icons.search, color: Color(0xFF073850)),
-                suffixIcon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (_searchController.text.isNotEmpty)
-                      IconButton(
-                        icon: const Icon(Icons.clear, color: Color(0xFF073850)),
-                        onPressed: () {
-                          _searchController.clear();
-                          _filterTasks();
-                        },
-                      ),
-                    IconButton(
-                      icon: Icon(
-                          _showFilter
-                              ? Icons.filter_list_off
-                              : Icons.filter_list,
-                          color: const Color(0xFF073850)),
-                      onPressed: _showFilterDialog,
-                    ),
-                  ],
-                ),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                enabledBorder:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.black, width: 2),
-                ),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-            ),
+          SearchFilterBar(
+            controller: _searchController,
+            hintText: 'Search by assigned to...',
+            showFilter: _showFilter,
+            onChanged: _filterTasks,
+            onFilterPressed: _showFilterDialog,
+            padding: const EdgeInsets.all(8),
           ),
           _isLoading
               ? const Expanded(

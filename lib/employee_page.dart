@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import '/models/employee.dart';
 import '/services/employee_service.dart';
+import '/widgets/search_filter_bar.dart';
 
 class EmployeePage extends StatefulWidget {
   const EmployeePage({super.key});
@@ -752,29 +753,16 @@ class _EmployeePageState extends State<EmployeePage> {
               const SizedBox(height: 20),
             ],
             if (!_showForm) ...[
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search by Employee name or email',
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                              _filterEmployees();
-                            },
-                          )
-                        : null,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                ),
+              SearchFilterBar(
+                controller: _searchController,
+                hintText: 'Search by Employee name or email',
+                onChanged: _filterEmployees,
+                padding: const EdgeInsets.only(bottom: 16),
+                iconColor: Colors.black54,
+                borderSide: BorderSide.none,
+                enabledBorderSide: BorderSide.none,
+                focusedBorderSide:
+                    const BorderSide(color: Colors.black, width: 1.5),
               ),
             ],
             _isLoading
