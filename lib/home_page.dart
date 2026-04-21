@@ -1255,7 +1255,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   context,
                   UserProfile(
                     numericId: widget.numericId,
-                    employeeId: widget.employeeId,
                     jobTitle: widget.jobTitle,
                     name: widget.name,
                     address: widget.address,
@@ -1313,7 +1312,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   context,
                   UserProfile(
                     numericId: widget.numericId,
-                    employeeId: widget.employeeId,
                     jobTitle: widget.jobTitle,
                     name: widget.name,
                     address: widget.address,

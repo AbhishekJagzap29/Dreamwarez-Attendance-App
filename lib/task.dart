@@ -45,12 +45,14 @@ class _TaskState extends State<Task> {
   }
 
   Future<void> _initialize() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
     try {
       await _fetchTasks();
     } catch (e) {
       _showNotification('Initialization failed: $e', isError: true);
     } finally {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
@@ -70,6 +72,7 @@ class _TaskState extends State<Task> {
         return b.taskId.compareTo(a.taskId);
       });
 
+      if (!mounted) return;
       setState(() {
         _tasks = tasks;
         _filteredTasks = _tasks;
@@ -85,6 +88,7 @@ class _TaskState extends State<Task> {
       return;
     }
 
+    if (!mounted) return;
     setState(() => _isLoading = true);
     try {
       final backendState = newState.replaceAll(' ', '_').toLowerCase();
@@ -94,11 +98,13 @@ class _TaskState extends State<Task> {
     } catch (e) {
       _showNotification('Failed to update task: $e', isError: true);
     } finally {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
 
   void _showNotification(String message, {bool isError = false}) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
@@ -467,15 +473,18 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   }
 
   Future<void> _fetchEmployees() async {
+    if (!mounted) return;
     setState(() => _isLoading = true);
     try {
       final employees = await _taskService.fetchAssignableEmployees();
+      if (!mounted) return;
       setState(() {
         _employees = employees;
       });
     } catch (e) {
       _showNotification('Failed to load employees: $e', isError: true);
     } finally {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
@@ -491,6 +500,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     );
 
     if (pickedDate != null) {
+      if (!mounted) return;
       setState(() {
         if (isStartDate) {
           startDate = pickedDate;
@@ -509,6 +519,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       return;
     }
 
+    if (!mounted) return;
     setState(() => _isLoading = true);
 
     try {
@@ -537,6 +548,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       _showNotification('Task created successfully!');
 
       // Clear form and go back
+      if (!mounted) return;
       _clearForm();
       widget.onTaskCreated();
       Navigator.pop(context);
@@ -544,11 +556,13 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       _showNotification('You don\'t have access to create tasks',
           isError: true);
     } finally {
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
 
   void _showNotification(String message, {bool isError = false}) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
